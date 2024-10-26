@@ -1,0 +1,13 @@
+public class AlertService
+{
+    private readonly double temperatureThreshold = 35.0; // e.g., trigger alert at 35°C
+
+    public void CheckThresholds(WeatherData weatherData)
+    {
+        if (weatherData.Main.Temp > temperatureThreshold)
+        {
+            Console.WriteLine($"Alert: Temperature exceeded {temperatureThreshold}°C in {weatherData.WeatherCondition}");
+            // Additional actions such as sending an email can be added here
+        }
+    }
+}
