@@ -1,0 +1,12 @@
+public class WeatherData
+{
+    public MainInfo Main { get; set; }
+    public long Dt { get; set; } // Unix timestamp
+    public string WeatherCondition { get; set; } // Main weather condition
+
+    public class MainInfo
+    {
+        public double Temp { get; set; }
+        public double FeelsLike { get; set; }
+    }
+}
