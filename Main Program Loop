@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class Program
+{
+    private static readonly WeatherService _weatherService = new WeatherService();
+    private static readonly DataAggregator _dataAggregator = new DataAggregator();
+    private static readonly AlertService _alertService = new AlertService();
+
+    private static async Task Main(string[] args)
+    {
+        var weatherDataList = new List<WeatherData>();
+        string dateToday = DateTime.Now.ToString("yyyy-MM-dd");
+
+        while (true)
+        {
+            var cities = new[] { "Delhi", "Mumbai", "Chennai", "Bangalore", "Kolkata", "Hyderabad" };
+
+            foreach (var city in cities)
+            {
+                var weatherData = await _weatherService.GetWeatherDataAsync(city);
+                weatherDataList.Add(weatherData);
+                _alertService.CheckThresholds(weatherData);
+            }
+
+            // Roll up data at the end of each day
+            if (DateTime.Now.ToString("yyyy-MM-dd") != dateToday)
+            {
+                _dataAggregator.CalculateDailySummary(weatherDataList, dateToday);
+                weatherDataList.Clear();
+                dateToday = DateTime.Now.ToString("yyyy-MM-dd");
+            }
+
+            Thread.Sleep(TimeSpan.FromMinutes(5)); // Configurable interval
+        }
+    }
+}
