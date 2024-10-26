@@ -1,0 +1,24 @@
+using System.Collections.Generic;
+using System.Linq;
+
+public class DataAggregator
+{
+    private readonly WeatherDatabase _db;
+
+    public DataAggregator()
+    {
+        _db = new WeatherDatabase();
+    }
+
+    public void CalculateDailySummary(List<WeatherData> data, string date)
+    {
+        var avgTemp = data.Average(d => d.Main.Temp);
+        var maxTemp = data.Max(d => d.Main.Temp);
+        var minTemp = data.Min(d => d.Main.Temp);
+        var dominantCondition = data.GroupBy(d => d.WeatherCondition)
+                                    .OrderByDescending(g => g.Count())
+                                    .First().Key;
+
+        _db.InsertDailySummary(date, avgTemp, maxTemp, minTemp, dominantCondition);
+    }
+}
